@@ -1,4 +1,4 @@
-Convolutional Neural Networks (CNNs) are a specialized class of artificial neural networks designed primarily for image processing and computer vision tasks. CNNs exploit the spatial structure of data, making them highly effective for tasks such as image classification, obkect detectionm and pattern recognition.
+Convolutional Neural Networks (CNNs) are a specialized class of artificial neural networks designed primarily for image processing and computer vision tasks. CNNs exploit the spatial structure of data, making them highly effective for tasks such as image classification, object detection, and pattern recognition.
 
 A CNN consists of several types of layers arranged sequentially with blocks - Convolutional layers, Pooling layers, and Fully connected layers - for extracting features from input data and perform classification.
 
