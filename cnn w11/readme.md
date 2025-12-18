@@ -8,4 +8,6 @@ The convolutional layer is the core component of a CNN which applies a set of le
 
 ![cnn2](https://github.com/user-attachments/assets/b1cbc5fa-c10b-41dc-b211-3ab65989f82a)
 
+An activation function, most commonly ReLU (Rectified Linear Unit), is applied after convolution.
 
+Pooling layers reduce the spatial dimensions of feature maps while retaining important information. Max pooling is commonly used method. It selects the maximum value within a window.
