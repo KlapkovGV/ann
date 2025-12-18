@@ -2,7 +2,7 @@ Convolutional Neural Networks (CNNs) are a specialized class of artificial neura
 
 A CNN consists of several types of layers arranged sequentially with blocks - Convolutional layers, Pooling layers, and Fully connected layers - for extracting features from input data and perform classification.
 
-![cnn](https://github.com/user-attachments/assets/b4ea7f39-4bc6-4026-a56d-7d3d63f863f8)
+![cnn](https://github.com/user-attachments/assets/67e8162c-0e53-48ac-a720-35a3ab6103fd)
 
 The convolutional layer is the core component of a CNN which applies a set of learnable filters (kernels) to the input image. Each filter slides across the image and performs element-wise multiplication followed by summation, producing a feature map. 
 
