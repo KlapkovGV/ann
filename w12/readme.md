@@ -126,7 +126,7 @@ EfficientNet's main contibution is compound scaling - simultaneously scaling all
 
 The scaling formula:
 
-- Deoth: d = α^φ
+- Depth: d = α^φ
 - Width: w =  β^φ
 - Resolution: r = γ^φ
 
