@@ -92,7 +92,7 @@ The network learns weights that combine evidence from different filters to make 
 
 1. The Independent and Identically Distributed (IID) Assumption
 
-In most basic machine learning (like classifying images of cats vc. dogs), we assume data is IID.
+In most basic machine learning (like classifying images of cats vs. dogs), we assume data is IID.
 - knowing one data point tells us nothing about the next. For example, seeing a picture of a cat does not make the next picture more or less likely to be a dog (independent);
 - all data points are drawn from the same source or probability distribution (identically distributed);
 - the image shows individual points (x^{(1)}, x^{(2)}, x^{(3)}) floating separately because they do not influence each other.
