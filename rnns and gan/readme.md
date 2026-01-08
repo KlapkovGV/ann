@@ -99,4 +99,5 @@ In most basic machine learning (like classifying images of cats vs. dogs), we as
 
 2. Sequential Data is not IID
 
-Sequential data - like textm speech, or stock prices - breaks the independence rule.
+Sequential data - like text, speech, or stock prices - breaks the independence rule.
+- in a sequence, the past predicts the future (strong correlation). For example, if it is 30°C right now (x^{(t-1)}), it is highly likely to be around 30°C in one minute (x^{(t)}). The data points are linked;
