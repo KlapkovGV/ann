@@ -45,3 +45,58 @@ f(X) -> y, where
 - we are turning a string of text into a vector of numbers; (feature extraction)
 - (sparsity) in real life, a vocabulary might have 10 000 words. If a sentence only has 5 words, the row will be mostly zeros.
 
+### How 1D Convolutional Neural Network (1D CNNs) process text or sequence data
+
+Unlike the Bag-of_Words model which treats words as isolated counts, a 1D CNN slides over the text to capture local patterns and context.
+
+1. The input sequence
+   - our input is "The coffee is hot.";
+   - each word (or character) is converted into numerical vector (called an embedding).
+  
+![cnn1](https://github.com/user-attachments/assets/05286a72-4d94-4acb-909e-b7f9b0fd21b9)
+
+Embeddings position semantically similar words closer in vector space.
+  
+2. The convolution operation
+
+1D CNNs apply filters (kernels) that slide across the sequence of word embeddings.
+
+![cnn2](https://github.com/user-attachments/assets/ea2fd788-5f5b-445d-80cc-1104c0b61bec)
+
+**How it works**: the filter (size 2) slides across pairs of word embeddings, computing dot products to detect local patterns (like "coffee is", "is how").
+
+the formula: Feature = σ(∑(embeddingᵢ × filterᵢ) + bias)
+
+3. Feature Maps and Pooling
+
+Each filter produces a feature map capturing specific patterns at different positions.
+
+![cnn3](https://github.com/user-attachments/assets/e749db48-8c32-4d30-8d53-e09ded254a84)
+
+Max Pooling retains the strongest activation for each filter, making the representation position-invariant and reducing dimensionality. 
+
+Pooled Features = [0.42, 0.67, 0.12, ...]
+
+4. Classification
+
+The pooled features are fed into a fully connected layer for classification.
+
+the formula: z = W·pooled_features + b
+
+The network learns weights that combine evidence from different filters to make predictions:
+- high activation from intensity filter + sentiment filter → positive;
+- High activation from "negation" filter → Could invert sentiment;
+- Multiple layers can learn hierarchical patterns.
+
+### Difference between standard machine learning and sequence-based models
+
+1. The Independent and Identically Distributed (IID) Assumption
+
+In most basic machine learning (like classifying images of cats vc. dogs), we assume data is IID.
+- knowing one data point tells us nothing about the next. For example, seeing a picture of a cat does not make the next picture more or less likely to be a dog (independent);
+- all data points are drawn from the same source or probability distribution (identically distributed);
+- the image shows individual points (x^{(1)}, x^{(2)}, x^{(3)}) floating separately because they do not influence each other.
+
+2. Sequential Data is not IID
+
+Sequential data - like textm speech, or stock prices - breaks the independence rule.
