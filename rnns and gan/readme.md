@@ -1,4 +1,4 @@
-### The Bag-of-Words (BoW) model
+# The Bag-of-Words (BoW) model
 
 The BoW model is a fundamental technique in Natural Language Processing (NLP) used to turn text into numbers that a computer can understand. TO explain this, let's use a new set of data involving fruit reviews.
 
@@ -45,7 +45,7 @@ f(X) -> y, where
 - we are turning a string of text into a vector of numbers; (feature extraction)
 - (sparsity) in real life, a vocabulary might have 10 000 words. If a sentence only has 5 words, the row will be mostly zeros.
 
-### How 1D Convolutional Neural Network (1D CNNs) process text or sequence data
+# How 1D Convolutional Neural Network (1D CNNs) process text or sequence data
 
 Unlike the Bag-of_Words model which treats words as isolated counts, a 1D CNN slides over the text to capture local patterns and context.
 
@@ -88,7 +88,7 @@ The network learns weights that combine evidence from different filters to make 
 - High activation from "negation" filter → Could invert sentiment;
 - Multiple layers can learn hierarchical patterns.
 
-### Difference between standard machine learning and sequence-based models
+# Difference between standard machine learning and sequence-based models
 
 1. The Independent and Identically Distributed (IID) Assumption
 
@@ -107,7 +107,7 @@ Sequential data - like text, speech, or stock prices - breaks the independence r
 - **standard models**: algorithms like linear regression or standard neural networks often struggle with sequence because they treat every data point as a fresh start.
 - **sequence models**: models like RNNs or LSTMs are specifically designed for the bottom half of the image. They have a memory to track those connections over time.
 
-### The applications of sequential data models
+# The applications of sequential data models
 
 They are designed to handle information where the order and history of data points are critical for prediction. While a standard model might look at a single data point in isolation, these models look at a history of points to understand the present. To explain this, let's look at three new real-world examples:
 
@@ -136,7 +136,7 @@ DNA is a long sequence of four bases (A, T, C, G).
 
 ![sequentialmodel](https://github.com/user-attachments/assets/9d0f1d86-6d59-42e4-b71c-fe9c7037458f)
 
-### How "memory" is physically built into the architecture
+# How "memory" is physically built into the architecture
 
 1. Feedforward Neural Network
 
@@ -164,7 +164,7 @@ Best for video, voice, and text.
 
 Sebastian Raschka, STAT 453: Intro to Deep Learning and Generative Models, SS 2020
 
-### Unrolling a Recurrent Neural Network
+# Unrolling a Recurrent Neural Network
 
 An unrolled RNN is a way to visualize and implement a reccurent neural network by expanding it over discrete time steps, turning the cyclic network into a feed-forward chain.
 
@@ -190,7 +190,7 @@ A critical detail in this image is that weights (the knoledge) inside the block 
 - the same mathematical fuction f is used at every step;
 - because the weights are shared, the network can process a sequence of any length wheter it is a 3-second clip or a 30-second clip using the same amount of memory.
 
-### RNN Architecture Types
+# RNN Architecture Types
 
 In these diagrams:
 - green circles are inputs (x);
@@ -234,7 +234,7 @@ Example: Language translation (GPS voice)
 ![rnn7](https://github.com/user-attachments/assets/1a82820e-fb5f-4777-b86d-a50ab8c33ef2)
 
 
-### The mathematical detail for how RNN maintains its "knowledge" across a sequence 
+# The mathematical detail for how RNN maintains its "knowledge" across a sequence 
 
 ![rnn9](https://github.com/user-attachments/assets/6e665318-ae74-4fd8-961a-8d9d5366c9a2)
 
