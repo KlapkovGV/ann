@@ -162,7 +162,7 @@ Best for video, voice, and text.
 
 ![rnn8](https://github.com/user-attachments/assets/e3a33041-764a-4cf2-8e1c-f160cc246390)
 
-Sebastian Raschka, STAT 453: Intro to Deep Learning and Generative Models, SS 2020
+image: Sebastian Raschka, STAT 453: Intro to Deep Learning and Generative Models, SS 2020
 
 # Unrolling a Recurrent Neural Network
 
@@ -236,9 +236,9 @@ Example: Language translation (GPS voice)
 
 # The mathematical detail for how RNN maintains its "knowledge" across a sequence 
 
-![rnn9](https://github.com/user-attachments/assets/6e665318-ae74-4fd8-961a-8d9d5366c9a2)
+![rnn9](https://github.com/user-attachments/assets/184ce057-3c2c-47d6-9fc4-74c11a2f801c)
 
-*Sebastian Raschka, STAT 453: Intro to Deep Learning and Generative Models, SS 2020*
+image: *Sebastian Raschka, STAT 453: Intro to Deep Learning and Generative Models, SS 2020*
 
 To explain this, let's use the example of an auto-complete on a smartphone.
 
@@ -256,3 +256,25 @@ The unrolled view shows how these matrices work together step-by-step:
 - at t we type "a". The network uses W_hh to remember "have" and W_hx to precess "a";
 
 Result: because of W_yh, the phone suggests "great" or "nice". It knows "a" usually follows "have" in this context.
+
+
+**The Net Input**
+
+The red arrow points to tne most important part of the process: calculating the Net Input z_h^(t). This is where the machine does the actual thinking.
+
+the formula: z_h^(t) = W_hx * x^t + W_hh * h^(t-1) + b_h, where
+- current input - W_hx * x^t;
+- past memory - W_hh * h^(t-1)
+- the bias - (b_h): a baseline setting, like knowing that traffic is generally hevier on monday mornings regardless of the sensors (the example of predicting traffic levels).
+
+![rnn10](https://github.com/user-attachments/assets/8344eeda-d5bd-4d3b-8ce4-9281ac3ac964)
+
+
+**The Activation Step**
+
+Once the network has summed up the current data and past memory, it passes that number through an activation function sigma_h.
+
+the formula: h^t = sigma_h * (z_h^(t))
+- this function decides how important this combined information is;
+- if the sensor sees 50 cars and there was an accident, the activation will be high, signalling high traffic ahead to the next step;
+- this result h^t then becomes the new memory that is passed forward to the next time step (t + 1).
