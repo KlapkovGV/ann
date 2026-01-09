@@ -160,7 +160,9 @@ On the right, a recurrent edge (the loop) is added to the hidden layer (h).
 
 Best for video, voice, and text.
 
-![difference](https://github.com/user-attachments/assets/da52bd71-ed7b-4db1-8ab0-3a58cb204677)
+![rnn8](https://github.com/user-attachments/assets/e3a33041-764a-4cf2-8e1c-f160cc246390)
+
+Sebastian Raschka, STAT 453: Intro to Deep Learning and Generative Models, SS 2020
 
 ### Unrolling a Recurrent Neural Network
 
@@ -188,3 +190,69 @@ A critical detail in this image is that weights (the knoledge) inside the block 
 - the same mathematical fuction f is used at every step;
 - because the weights are shared, the network can process a sequence of any length wheter it is a 3-second clip or a 30-second clip using the same amount of memory.
 
+### RNN Architecture Types
+
+In these diagrams:
+- green circles are inputs (x);
+- blue circles are hidden states (the network's memory);
+- orange circles are outputs (y).
+
+**1. Many-to-One**
+
+The model takes a whole sequence of data and gives us a single answer at the end.
+
+Example: Driver distraction detection
+- the flow: the model looks at 30 seconds of steering wheel movements and eye-tracking data and finally outputs a single yes or no for whether the driver is falling asleep.
+
+![rnn4](https://github.com/user-attachments/assets/a8064edc-5dfa-44f6-b562-7701a3a08a32)
+
+**2. One-to-Many**
+
+The model takes a single piece of information and generates an entire sequence.
+
+Example: Generating a trip summary
+- the flow: we give the vodel a single image of destination, and it generates a text description like "A sunny beach with palm trees and white sand" (the many outputs, word by word).
+
+![rnn5](https://github.com/user-attachments/assets/3f7050c0-4ef5-4018-9458-4543a15e2d34)
+
+**3. Many-to-Many (Synced)**
+
+For every input that goes in, an output comes out immediatly. The input and output sequences are the same length.
+
+Example: Frame-by-Frame Video Labeling
+- the flow: in a dashcam video, for every single frame (x) the camera captures, the model must immediatly output a label (y) like traffic light, or car.
+
+![rnn6](https://github.com/user-attachments/assets/7c0e726f-e5a8-4f26-974c-5bddf7af2e82)
+
+**4. Encoder-Decoder**
+
+The model reads the entire input sequence first, thinks about it, and then starts producing an output sequence that might be a different length.
+
+Example: Language translation (GPS voice)
+- the flow: the system hears the English phrase "turn left at the next light". It processes that whole sequence and then generates the Russian translation "Поверните налево на следующем светофоре".
+
+![rnn7](https://github.com/user-attachments/assets/1a82820e-fb5f-4777-b86d-a50ab8c33ef2)
+
+
+### The mathematical detail for how RNN maintains its "knowledge" across a sequence 
+
+![rnn9](https://github.com/user-attachments/assets/6e665318-ae74-4fd8-961a-8d9d5366c9a2)
+
+*Sebastian Raschka, STAT 453: Intro to Deep Learning and Generative Models, SS 2020*
+
+To explain this, let's use the example of an auto-complete on a smartphone.
+
+**1. The three key weight matrices in texting**
+
+When we type a message, our phone's "brain" (the RNN) uses these specific sets of rules to guess our next word:
+- W_hx (input-to-hidden) handles the current word. If we typed "happy", this matrix processes those specific letters so the brain understands the immediate input;
+- W_hh (hidden-to-hidden) is the conversation memory. If the word before "happy" was "birthday", this matrix carries that birthday context forward. It tells the brain: "do not forget, we are talking about an anniversary";
+- W_yh (hidden-to-output) is the final guess. It takes the combined content (birthday + happy) and translates it into the predicted word we see on the screen: "birthday".
+
+**2. How the sentence works**
+
+The unrolled view shows how these matrices work together step-by-step:
+- at t-1 we type "have". The brain (h^(t-1)) stores the idea that a sentence is starting;
+- at t we type "a". The network uses W_hh to remember "have" and W_hx to precess "a";
+
+Result: because of W_yh, the phone suggests "great" or "nice". It knows "a" usually follows "have" in this context.
