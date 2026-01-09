@@ -141,10 +141,50 @@ DNA is a long sequence of four bases (A, T, C, G).
 1. Feedforward Neural Network
 
 On the left, we see a traditional network where data flows in one direction: from input (x) to output (y).
+- how it work: imagine we feed the network the word "stir". It might guess the next word is "it";
+- the limitation: if we then feed it the word "the", it has completely forgotten that we just said stir;
+- the math: each input is treated as independent. It has no internal state to store what happened a second ago.
 
+Best for photos and static data.
 
 2. Recurrent Neural Network (the 'memory' model)
 
 On the right, a recurrent edge (the loop) is added to the hidden layer (h).
+- the loop: this represent a feedback connection where the output of the hidden layer at one moment is fed back into itself for the next moment;
+- hidden state (h): this acts as the network's memory. It stores a summary of everything it has seen in the sequence so far.
+
+**How it works**
+1. We put input "stir". The hidden states remembers "We are currently stirring";
+2. We put "the". The network combines this new input with its memory of "stiring";
+3. As a result, it can now accurately predict "soup" instead of guessing a random word.
+
+Best for video, voice, and text.
 
 ![difference](https://github.com/user-attachments/assets/da52bd71-ed7b-4db1-8ab0-3a58cb204677)
+
+### Unrolling a Recurrent Neural Network
+
+An unrolled RNN is a way to visualize and implement a reccurent neural network by expanding it over discrete time steps, turning the cyclic network into a feed-forward chain.
+
+![unrolling](https://github.com/user-attachments/assets/3a62f64f-6535-497a-a7c6-3a8ede91b0f1)
+
+1. The compressed view (left)
+
+It shows the RNN as single block with loop.
+- the input is a single snapshot of sensor data;
+- the hidden layer is the "brain" of the network that holds its current memory;
+- the loop represents the recurrence. It feeds its own memory back into itself for the next moment.
+
+2. The unrolled view (rigth)
+
+To understand how the math works, we unroll the loop into a chain. Instead of one looping layer, we visualize it as a series of identical layers - one for each Time Step (t).
+- time step t-1 represents past. The sensor detects "door opened". This information is stored in the hidden state h^(t-1);
+- time step t represent present. The sensor now detects "footsteps". The network combines this new input x^t with its memory of the door opening h^(t-1) to update its current state h^t;
+- time step t+1 represent future. The next input arrives. The chain continues, allowing the network to see the story of the data rether than just isolated moments.
+
+**Paramenter sharing**
+
+A critical detail in this image is that weights (the knoledge) inside the block do not change as it unrolls.
+- the same mathematical fuction f is used at every step;
+- because the weights are shared, the network can process a sequence of any length wheter it is a 3-second clip or a 30-second clip using the same amount of memory.
+
