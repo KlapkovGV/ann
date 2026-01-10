@@ -394,3 +394,43 @@ where
 
 The goal: we do not just want the model to be right at 5.00 pm; we want it to be right at every single second (t) of the day. We sum up every mistake to get the big picture of ow the model is performing.
 
+# The standard solutions used to overcome the mathematical challenges of training RNN
+
+**1. The gradient clipping**
+
+This is a direct fix for the Exploding Gradient problem. 
+
+How it work
+- we set a maximum allowed value for the gradient.
+
+**2. Truncated Backpropagation Through Time (TBPTT)**
+
+This is a practical shortcut used to make training faster and more stable.
+
+How it work
+- instead of making the learning signal travel back through the entire day's worth of traffic data, we limit it to a specific number of steps, like the las 20 minutes.
+- the trade-off: while the model cannot learn dependecies that are hours apart, it becomes much more efficient and less likely to suffer from numerical errors.
+
+**3. Long Short-Term Memory (LSTM)**
+
+This is the most famous architectural solution to the Vanishing Gradient problem.
+
+How it works
+- an LSTM replaces the simple RNN brain with more complex **memory cell**.
+
+The Gate system
+- it uses special gates (input, forget, and output gates) to decide exactly which information is worth keeping and which can be deleted.
+
+Traffic example
+- if a mojor accident happens at 8:00 am, the LSTM "forget gate" recognizes this is critical info and keeps it in its long-term memory cell. Even at 11:00 am, that information has not vanished because the cell protected it, allowing the model to accurately predict lingering traffic delays.
+
+## The LSTM cell
+
+![rnn18](https://github.com/user-attachments/assets/d260fbe9-a66b-4a63-a53d-9a5eb37e7892)
+
+image: *Sebastian Raschka, STAT 453: Intro to Deep Learning and Generative Models, SS 2020*
+
+It is the most widely used solution for handling long-range dependencies in traffic data without losing information over time.
+
+While a standard RNN has a very simple "brain", the LSTM uses complex system of *gates* to manage its memory.
+
