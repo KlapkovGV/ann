@@ -258,7 +258,7 @@ The unrolled view shows how these matrices work together step-by-step:
 Result: because of W_yh, the phone suggests "great" or "nice". It knows "a" usually follows "have" in this context.
 
 
-**The Net Input**
+**The Net Input for z_h**
 
 The red arrow points to tne most important part of the process: calculating the Net Input z_h^(t). This is where the machine does the actual thinking.
 
@@ -269,8 +269,9 @@ the formula: z_h^(t) = W_hx * x^t + W_hh * h^(t-1) + b_h, where
 
 ![rnn10](https://github.com/user-attachments/assets/8344eeda-d5bd-4d3b-8ce4-9281ac3ac964)
 
+image: *Sebastian Raschka, STAT 453: Intro to Deep Learning and Generative Models, SS 2020*
 
-**The Activation Step**
+**The Activation Step for h^t**
 
 Once the network has summed up the current data and past memory, it passes that number through an activation function sigma_h.
 
@@ -278,3 +279,118 @@ the formula: h^t = sigma_h * (z_h^(t))
 - this function decides how important this combined information is;
 - if the sensor sees 50 cars and there was an accident, the activation will be high, signalling high traffic ahead to the next step;
 - this result h^t then becomes the new memory that is passed forward to the next time step (t + 1).
+
+![rnn11](https://github.com/user-attachments/assets/c83b613b-7c58-4441-9552-738c53c78a29)
+
+image: *Sebastian Raschka, STAT 453: Intro to Deep Learning and Generative Models, SS 2020*
+
+**The Net Input for z_y**
+
+The red arrow on the rigth points to the final calculation needed to produce a result z_y:
+
+the formula: z_y^(t) = W_yh * h^t + b_y, where 
+- Internal State h^t contains a summary of the situation;
+- Output Weight W_yh translates that internal summary into a score;
+- Output Bias b_y is final adjustment.
+
+**The Activation Step for y^t**
+
+Just like the hidden state, this final score is passed through an Activation Function sigma_y to produce the final output.
+
+the formula: y^t = sigma_y * z_y^(t)
+
+The final value y^t is the action the machine actually takes.
+
+Depending on what we want to know about traffic levels, the output y^t could be:
+- a number (regression model): there will be 450 vehicles on this streatch in the next 10 minites;
+- a category (classification model): Traffic Status: Congested;
+- a probability: There is a 90% chance of standstill within 2 miles.
+
+**Why this is defferent from a simple snapshot?** A standard senser (non-RNN) might see 100 cars and say "Traffic is moderate". But the RNN looks at the history stored in the hidden state:
+- scenario A: 100 cars, but 5 minuts ago it was 20. So, output: Congestion incoming!
+- scenario B: 100 cars, but 5 minuts ago it was 300. So, output: Traffic is clearing up.
+
+# Backpropagation Through Time (BPTT)
+
+Below explains BPTT, which is how a RNN learns from its mistakes in a sequence. Let's see how the model improves its accuracy after getting a prediction wrong. 
+
+![rnn12](https://github.com/user-attachments/assets/b97ecb65-ac71-455e-bbce-2737d9d9cc26)
+
+image: *Sebastian Raschka, STAT 453: Intro to Deep Learning and Generative Models, SS 2020*
+
+**1. Calculating Local Loss (L^t)**
+
+In the image, the black arrows pointing upward to L represent the Loss (the error) at each specific second.
+
+- the mistake: at time t, the model predicts light traffic, but the actual sensor sees a gridlock;
+- the penalty: the system calculates the difference between its guess y^t and the truth. This penalty is L^t;
+- total loss L: the model sums up all these individual mistakes across the entire sequence to get a single total error value.
+
+**2. The backwards flow (red arraws)**
+
+The red arrows represent the most important part of BPTT: the gradient flow. To fix the total error, the model must send a signal backward through the entire chain to find out which weight was responsible for the bad guess.
+
+- fixing the guess W_yh: first, the red arrows goes from the loss back to the output layer to adjust how it translates thoughts into predictions;
+- fixing the memory W_hh: this is the unique part of BPTT. The red arrows flow horizontally backward through the hidden states (h^(t+1) → h^t → h^(t-1)).
+        - example: the model realizes, "I missed the traffic jam because I did not pay enough attention to the car crash that happened 10 minutes ago h^(t-1). It then adjust W_hh to remember those types of events better next time.
+
+**3. Updating the input weights W_hx**
+
+Finally, the signal reaches the bottom layers. It adjusts how mach weight it gives to the current sensor readings.
+
+### The conceptual mechanics of RNN to the mathematical challenges encountered when training them over long sequence
+
+**1. The mathematical problem (Vanishing/Exploding Gradients)**
+
+This happens during the backwards pass of training. 
+- the chain of multiplication: to find out how a change in weights 2 hours ago affects a traffic jam now, the computer must multiply the importance of every single second in between;
+- vanishing gradients: if these importance values are even slightly less than 1 (e.g., 0.9), multiplying them thousands of time (0.9 x 0.9 x 0.9 ...) results in a number so tiny it basically **becomes zero**. The model forgets that the 2-hour-old accident was the cause;
+- exploding gradients: conversely, if the values are slightly larger than 1 (e.g., 1.1), the number becomes massive, causing the model to crash or explode with unstable updates.
+
+![rnn13](https://github.com/user-attachments/assets/0f5b25a7-9602-409c-85d9-79eec85f41af)
+
+**Examples**
+
+```python
+// Example: After 50 time steps with factor 0.9
+0.9^50 = 0.00515 // Almost zero!
+
+// Example: After 50 time steps with factor 1.1
+1.1^50 = 117.39 // Huge number!
+```
+
+**2. Understanding Gradient Flow**
+
+**Core problem area**
+
+![rnn14](https://github.com/user-attachments/assets/932aa5f9-2340-46e5-bcbf-b0275c77a6b0)
+
+where
+- ∂h(t): traffic state right now (at time t);
+- ∂h(k): traffic state 2 hours ago (at earlier time k);
+- Product (∏): this symbol means multiply all steps together. This long chain of multiplication is what creates the extreme numbers.
+
+**Gradient Formula**
+
+![rnn16](https://github.com/user-attachments/assets/a81ce146-1c40-4633-847c-3dfe36873a21)
+
+where
+- W could be either:
+  - W_hx (input-to-hidden weights);
+  - or a simplified notation where W represent whichever weight matrix we are differentiating.
+- ∂L(t)/∂y(t) is how the loss at time t changes with respect to the output y(t);
+- ∂y(t)/∂h(t) is how the output y(t) changes with respect to the hidden state h(t);
+- ∂h(t)/∂W is how the hidden state h(t) changes with respect to the weights W. This expands recursively if W = W_hh (recurrent weights), but for W = W_hx (input weights), it is simpler h(t) = f(W_hx * x(t) + W_hh * h(t-1) + b), so ∂h(t)/∂W(hx) = f′(⋅) * x(t).
+
+**3. Total Loss Calculation**
+
+![rnn17](https://github.com/user-attachments/assets/9ce9260c-966a-40e4-bd52-c95cf4d69665)
+
+where 
+- Sigma (∑): the summation symbol means add up all values from t=1 to T;
+- L is total loss across the entire seauence;
+- L(t) is loss at a specific time step t;
+- T is total number of time steps in the sequence.
+
+The goal: we do not just want the model to be right at 5.00 pm; we want it to be right at every single second (t) of the day. We sum up every mistake to get the big picture of ow the model is performing.
+
