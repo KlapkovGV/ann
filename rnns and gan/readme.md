@@ -13,7 +13,12 @@ Computers cannot do math on the words "apple" or "tasty", so we start with our r
 
 We look at all the sentences and make a list of every unique word. We then assign each word a specific index (a position).
 
-![rnn](https://github.com/user-attachments/assets/a75684ca-869a-47ed-b107-c0fdc984c215)
+| Index | Word  |
+| :---: | :---: |
+|   0   |  and  |
+|   1   | apple |
+|   2   | green |
+|   3   |  red  |
 
 3. **The Design Matrix (X)**
 
@@ -24,14 +29,23 @@ X = [ [0, 1, 0, 1],
       [0, 1, 1, 0],
       [1, 2, 1, 1] ]
 ```
-![rnn2](https://github.com/user-attachments/assets/e73741d2-b31e-4500-9198-7394595dde6d)
+
+| Sentence | and (0) | apple (1) | green (2) | red (3) |
+| :--- | :---: | :---: | :---: | :---: |
+| "Red apple" | 0 | 1 | 0 | **1** |
+| "Green apple" | 0 | 1 | **1** | 0 |
+| "Red apple and green apple" | **1** | **2** | **1** | **1** |
 
 4. **Class Labels (y)**
 
 In text classification, we usually have a goal, like deciding if a review is positive (1) or negative (0).
 - y = [1, 1, 1]. In this case, maybe they are all "Fresh" fruit reviews.
 
-![rnn3](https://github.com/user-attachments/assets/d4d78488-45be-4290-aee0-7855a13cb71e)
+| Sentence | Label | Meaning |
+| :--- | :---: | :--- |
+| "Red apple" | 1 | Fresh |
+| "Green apple" | 1 | Fresh |
+| "Red apple and green apple" | 1 | Fresh |
 
 5. **The Classifier**
 
@@ -53,7 +67,12 @@ Unlike the Bag-of_Words model which treats words as isolated counts, a 1D CNN sl
    - our input is "The coffee is hot.";
    - each word (or character) is converted into numerical vector (called an embedding).
   
-![cnn1](https://github.com/user-attachments/assets/05286a72-4d94-4acb-909e-b7f9b0fd21b9)
+| Word | Embedding Vector (simplified) |
+| :--- | :--- |
+| The | [0.2, -0.1, 0.3] |
+| coffee | [0.8, 0.5, -0.2] |
+| is | [-0.1, 0.3, 0.1] |
+| hot | [0.6, -0.4, 0.7] |
 
 Embeddings position semantically similar words closer in vector space.
   
@@ -61,7 +80,11 @@ Embeddings position semantically similar words closer in vector space.
 
 1D CNNs apply filters (kernels) that slide across the sequence of word embeddings.
 
-![cnn2](https://github.com/user-attachments/assets/ea2fd788-5f5b-445d-80cc-1104c0b61bec)
+> **Input Vectors:** > [0.2, -0.1, 0.3]  [0.8, 0.5, -0.2]  [-0.1, 0.3, 0.1]  [0.6, -0.4, 0.7]
+> ↓
+> **Filter 1:** [0.5, 0.3, -0.2]
+> ↓
+> **Result:** [0.35] [0.42] [0.18]
 
 **How it works**: the filter (size 2) slides across pairs of word embeddings, computing dot products to detect local patterns (like "coffee is", "is how").
 
@@ -71,7 +94,11 @@ the formula: Feature = σ(∑(embeddingᵢ × filterᵢ) + bias)
 
 Each filter produces a feature map capturing specific patterns at different positions.
 
-![cnn3](https://github.com/user-attachments/assets/e749db48-8c32-4d30-8d53-e09ded254a84)
+| Filter | Feature Map (before pooling) | After Max Pooling |
+| :--- | :--- | :---: |
+| Filter 1 (sentiment) | [0.35, 0.42, 0.18] | **0.42** |
+| Filter 2 (intensity) | [0.28, 0.51, 0.67] | **0.67** |
+| Filter 3 (negation) | [-0.1, 0.05, 0.12] | **0.12** |
 
 Max Pooling retains the strongest activation for each filter, making the representation position-invariant and reducing dimensionality. 
 
@@ -434,3 +461,68 @@ It is the most widely used solution for handling long-range dependencies in traf
 
 While a standard RNN has a very simple "brain", the LSTM uses complex system of *gates* to manage its memory.
 
+**Key variables**
+- x(t) is the current input at time step t;
+- h(t-1) is the short-term memory from the previous time step;
+- C(t-1) is the long-term memory flowing from the past;
+- C(t) is the updated long-term memory after processing the current input;
+- h(t) is the current hidden state/output, which is passed to the next layer and the next time step.
+
+**The Three Gates**
+
+The yellow boxes at the bottom represent three specialized filters that decide what happens to the memory:
+- **Forget Gate (f):** It decides what information to discard from the cell state. A value near 0 means forget, and near 1 means keep;
+  - formula: f = σ(W_fx * x(t) + W_fh * h(t-1) + b_f).
+- **Input Gate (i and g):** It decides which new information to store in the cell state. i acts as a filter, while g creates a vector of new candidate values;
+  - formulas: i = σ(W_ix * x(t) + W_ih * h(t-1) + b_i) and g = tanh(W_gx * x(t) + W_gh * h(t-1) + b_g).
+- **Output Gate (o):**  It decides what the next hidden state h(t) should be based on the updated long-term memory.
+  - formula: o = σ(W_ox * x(t) + W_oh * h(t-1) + b_o).
+ 
+**Mathematical Operations**
+- σ (Sigmoid) is an activation function that outputs values between 0 and 1;
+- tanh is an activation function that outputs between -1 and 1;
+- ⊙ (point multiplication) used by gates to block ar allow information flow;
+- ⊕ (point addition) used to update the cell state without risky multiplications.
+
+**How the cell state is actually updated inside the LSTM**
+
+The equation: C(t) = (C(t-1) ⊙ f_t) ⊕ (i_t ⊙ g_t)
+
+**Genarating the hidden state h(t)**
+
+The equation: h(t) = o(t) ⊙ tanh(C(t))
+
+It serves as both the output for the current tima step and the short-term memory passed to the next step.
+
+
+# Two functionally equivalent ways to implement RNNs with LSTMs in PyTorch, with a key performance difference
+
+### LSTMCell - Slower
+
+```python
+self.rnn = torch.nn.LSTMCell(input_size, hidden_size)
+
+def forward(self, x):
+      embedded = self.embedding(text)
+      h = self.initial_hidden_state()
+      for input un x:
+            h = self.rnn(input, h)
+```
+
+This uses LSTMCell, which processes one timestep at a time. We manually loop through each input in the sequence, feeding each timestep individually to the LSTM cell and updating the hidden state.
+
+### LSTM - Faster
+
+```python
+self.rnn = torch.nn.LSTM(input_size, hidden_size)
+
+def forward(self, x):
+      h_0 = self.initial_hidden_state()
+      output, h = self.rnn(x, h_0)
+```
+
+This uses LSTM, which processes the entire sequence at once. We pass the whole sequence x to the LSTM module, and it handles all timesteps internally.
+
+The PyTorch resource that explain LSTM
+
+https://docs.pytorch.org/docs/stable/generated/torch.nn.LSTM.html
