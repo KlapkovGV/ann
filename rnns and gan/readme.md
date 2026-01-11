@@ -526,3 +526,11 @@ This uses LSTM, which processes the entire sequence at once. We pass the whole s
 The PyTorch resource that explain LSTM
 
 https://docs.pytorch.org/docs/stable/generated/torch.nn.LSTM.html
+
+A good resources that explain RNN
+
+Sebastian Raschka, STAT 453: Intro to Deep Learning and Generative Models, SS 2020 https://github.com/rasbt/stat453-deep-learning-ss20/tree/master/L14-rnns
+
+Boden, Mikael. "A guide to recurrent neural networks and backpropagation." (2002).
+
+Hochreiter, Sepp, and Jürgen Schmidhuber. "Long short-term memory." Neural computation 9, no. 8 (1997): 1735-1780.
